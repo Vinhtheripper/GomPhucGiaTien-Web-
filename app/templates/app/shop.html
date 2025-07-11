@@ -1,0 +1,214 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block shop-content %}
+
+		<!-- Start Hero Section -->
+		<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Modern Interior <span class="d-block">Design Studio</span></h1>
+								<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+								<p><a href="#first" class="btn btn-white-outline">Explore</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="{% static 'app/images/bg5.png' %}" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+
+		<br><br/>
+
+		<div class="untree_co-section product-section before-footer-section">
+		    <div class="container">
+			  <div class="row">
+				{% for product in products %}
+				  <div class="col-12 col-md-6 col-lg-3 mb-5">
+					<a class="cart-product-item" href="{% url 'prodetail' %}?id={{ product.id }}">
+					  <img src="{{ product.image.url }}" class="img-fluid product-thumbnail">
+					  <h3 class="product-title">{{ product.name }}</h3>
+					  <strong class="product-price">₫{{ product.price|floatformat:0|intcomma }}</strong>
+
+					  <span class="icon-cross">
+						<img src="{% static 'app/images/cross2.svg' %}" class="img-fluid add-to-cart"
+							 data-id="{{ product.id }}"
+							 data-name="{{ product.name }}"
+							 data-price="{{ product.price|floatformat:0 }}"
+							 data-image="{{ product.image.url }}"
+							 style="cursor:pointer;"
+						/>
+					  </span>
+					</a>
+				  </div>
+				{% endfor %}
+			  </div>
+			</div>
+
+		</div>
+<style>
+.cart-product-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  text-align: center;
+  background-color: transparent;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+/* Ảnh sản phẩm */
+.product-thumbnail {
+  width: 100%;
+  max-width: 140px;
+  height: 140px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+/* Tên & giá sản phẩm */
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #2f2f2f;
+  text-decoration: none;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+}
+
+/* Dấu cộng (ban đầu ẩn) */
+.icon-cross {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Icon svg màu đen (giữ nguyên) */
+.icon-cross img {
+  width: 16px;
+  height: 16px;
+  filter: none;
+}
+
+/* Hover hiệu ứng ảnh & dấu cộng */
+.cart-product-item:hover .product-thumbnail {
+  transform: translateY(-10px); /* Đẩy ảnh lên nhẹ */
+}
+
+.cart-product-item:hover .icon-cross {
+  bottom: 5px; /* Hiện lên gần đáy */
+  opacity: 1;
+  visibility: visible;
+}
+</style>
+<script >
+	document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const product = {
+        id: this.dataset.id,
+        name: this.dataset.name,
+        price: parseInt(this.dataset.price ),
+        image: this.dataset.image,
+        quantity: 1
+      };
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+
+      if (index !== -1) {
+        cart[index].quantity += 1;
+      } else {
+        cart.push(product);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Sản phẩm đã thêm:', product);
+      console.log('Cart hiện tại:', cart);
+
+      updateCartCount();  // Cập nhật số đếm sau khi thêm sản phẩm
+
+      //  Hiệu ứng bay về giỏ hàng
+      const productImage = this.closest('a').querySelector('img');
+      const cartIcon = document.getElementById('cart-icon');
+
+      if (productImage && cartIcon) {
+        const imgClone = productImage.cloneNode(true);
+        const rectStart = productImage.getBoundingClientRect();
+        const rectEnd = cartIcon.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.zIndex = 1000;
+        imgClone.style.left = rectStart.left + 'px';
+        imgClone.style.top = rectStart.top + 'px';
+        imgClone.style.width = productImage.width + 'px';
+        imgClone.style.transition = 'all 0.8s ease-in-out';
+        imgClone.style.opacity = 0.7;
+
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+          imgClone.style.left = rectEnd.left + 'px';
+          imgClone.style.top = rectEnd.top + 'px';
+          imgClone.style.width = '20px';
+          imgClone.style.opacity = 0;
+        }, 10);
+
+        setTimeout(() => {
+          imgClone.remove();
+        }, 900);
+      }
+    });
+  });
+
+  //  Hàm cập nhật số đếm trên icon giỏ hàng
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const countEl = document.getElementById('cart-count');
+    if (total > 0) {
+      countEl.innerText = total;
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  //  Gọi khi trang tải xong
+  window.onload = () => {
+    updateCartCount();
+  };
+
+
+</script>
+
+{% endblock %}

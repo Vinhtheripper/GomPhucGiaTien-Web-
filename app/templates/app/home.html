@@ -1,0 +1,435 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main-content %}
+
+
+<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Modern Interior <span class="d-block">Design Studio</span></h1>
+								<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+								<p><a href="{% url 'shop' %}" class="btn btn-secondary me-2">Shop Now</a><a href="#first" class="btn btn-white-outline">Explore</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="{% static 'app/images/gom3.png' %}" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+        <br><br/>
+        <br><br/>
+        <br><br/>
+		<br><br/>
+
+		<!-- Start Product Section -->
+		<div class="product-section" id="first">
+			  <div class="container">
+				<div class="row">
+
+				  <!-- Cột giới thiệu -->
+				  <div class="col-md-12 col-lg-3 mb-5 mb-lg-0" style="margin-top: 1cm;">
+					<h2 class="mb-4 section-title">Crafted with excellent material.</h2>
+					<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+					<p><a href="{% url 'shop' %}" class="btn">Explore</a></p>
+				  </div>
+
+				  <!-- Các sản phẩm: chiếm phần còn lại -->
+				  <div class="col-md-12 col-lg-9" style="margin-left: 0cm;">
+					<div class="row g-5 ms-3">
+					  {% for product in products|slice:":3" %}
+					  <div class="col-12 col-md-4 mb-4">
+						<a class="product-item" href="{% url 'prodetail' %}?id={{ product.id }}"> <!-- Không có add-to-cart ở đây -->
+							  <img src="{{ product.image.url }}" class="img-fluid product-thumbnail" />
+							  <h3 class="product-title">{{ product.name }}</h3>
+							  <strong class="product-price">₫{{ product.price|floatformat:0|intcomma }}</strong>
+							  <span class="icon-cross">
+								<img src="{% static 'app/images/cross.svg' %}"
+									 class="img-fluid add-to-cart"
+									 data-id="{{ product.id }}"
+									 data-name="{{ product.name }}"
+									 data-price="{{ product.price|floatformat:0 }}"
+									 data-image="{{ product.image.url }}"
+									 style="cursor:pointer;" />
+							  </span>
+							</a>
+
+					  </div>
+					  {% endfor %}
+					</div>
+				  </div>
+
+				</div>
+			  </div>
+			</div>
+
+		<!-- End Product Section -->
+
+		<!-- Start Why Choose Us Section -->
+		<div class="why-choose-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-6">
+						<h2 class="section-title">Why Choose Us</h2>
+						<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+
+						<div class="row my-5">
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="{% static 'app/images/truck.svg' %}" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Fast &amp; Free Shipping</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="{% static 'app/images/bag.svg' %}" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Easy to Shop</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="{% static 'app/images/support.svg' %}" alt="Image" class="imf-fluid">
+									</div>
+									<h3>24/7 Support</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="{% static 'app/images/return.svg' %}" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Hassle Free Returns</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="img-wrap">
+							<img src="{% static 'app/images/why-choose-us-img.jpg' %}" alt="Image" class="img-fluid">
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End Why Choose Us Section -->
+
+		<!-- Start We Help Section -->
+		<div class="we-help-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-7 mb-5 mb-lg-0">
+						<div class="imgs-grid">
+							<div class="grid grid-1"><img src="{% static 'app/images/img-grid-1.jpg' %}" alt="Untree.co"></div>
+							<div class="grid grid-2"><img src="{% static 'app/images/img-grid-2.jpg' %}" alt="Untree.co"></div>
+							<div class="grid grid-3"><img src="{% static 'app/images/img-grid-3.jpg' %}" alt="Untree.co"></div>
+						</div>
+					</div>
+					<div class="col-lg-5 ps-lg-5">
+						<h2 class="section-title mb-4">We Help You Make Modern Interior Design</h2>
+						<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada</p>
+
+						<ul class="list-unstyled custom-list my-4">
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+						</ul>
+						<p><a href="{% url 'shop' %}" class="btn">Explore</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End We Help Section -->
+
+		<!-- Start Popular Product -->
+		<div class="popular-product" >
+			  <div class="container">
+				<div class="row">
+				  {% for product in products|slice:":3" %}
+				  <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+					<a class="product-item-sm d-flex" href="{% url 'prodetail' %}?id={{ product.id }}">
+					  <div class="thumbnail" >
+						<img src="{{ product.image.url }}" alt="Image" class="img-fluid">
+					  </div>
+					  <div class="pt-3">
+						<h3>{{ product.name }}</h3>
+						<p>
+						  {% with product.detail|truncatewords:19 as preview %}
+							{% if preview|length > product.detail|truncatewords:10|length %}
+							  {{ preview|slice:":150" }}...
+							{% else %}
+							  {{ preview|slice:"11:" }}
+							{% endif %}
+						  {% endwith %}
+						</p>
+
+						<p><a href="#">Read More</a></p>
+					  </div>
+					</a>
+				  </div>
+				  {% endfor %}
+				</div>
+			  </div>
+			</div>
+
+
+
+
+		<!-- End Popular Product -->
+
+		<!-- Start Testimonial Slider -->
+		<div class="testimonial-section">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-7 mx-auto text-center">
+						<h2 class="section-title">Testimonials</h2>
+					</div>
+				</div>
+
+				<div class="row justify-content-center">
+					<div class="col-lg-12">
+						<div class="testimonial-slider-wrap text-center">
+
+							<div id="testimonial-nav">
+								<span class="prev" data-controls="prev"><span class="fa fa-chevron-left"></span></span>
+								<span class="next" data-controls="next"><span class="fa fa-chevron-right"></span></span>
+							</div>
+
+							<div class="testimonial-slider">
+
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="{% static 'app/images/person-1.png' %}" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<!-- END item -->
+
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="{% static 'app/images/person-1.png' %}" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<!-- END item -->
+
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="{% static 'app/images/person-1.png' %}" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<!-- END item -->
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Testimonial Slider -->
+
+		<!-- Start Blog Section -->
+		<div class="blog-section">
+			<div class="container">
+				<div class="row mb-5">
+					<div class="col-md-6">
+						<h2 class="section-title">Recent Blog</h2>
+					</div>
+					<div class="col-md-6 text-start text-md-end">
+						<a href="#" class="more">View All Posts</a>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							<a href="#" class="post-thumbnail"><img src="{% static 'app/images/post-1.jpg' %}" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">First Time Home Owner Ideas</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 19, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							<a href="#" class="post-thumbnail"><img src="{% static 'app/images/post-2.jpg' %}" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">How To Keep Your Furniture Clean</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Robert Fox</a></span> <span>on <a href="#">Dec 15, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							<a href="#" class="post-thumbnail"><img src="{% static 'app/images/post-3.jpg' %}" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">Small Space Furniture Apartment Ideas</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 12, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+<script>
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const product = {
+        id: this.dataset.id,
+        name: this.dataset.name,
+        price: parseInt(this.dataset.price || 0),
+        image: this.dataset.image,
+        quantity: 1
+      };
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+
+      if (index !== -1) {
+        cart[index].quantity += 1;
+      } else {
+        cart.push(product);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Sản phẩm đã thêm:', product);
+      console.log('Cart hiện tại:', cart);
+
+      updateCartCount();  // Cập nhật số đếm sau khi thêm sản phẩm
+
+      // 🔥 Hiệu ứng bay về giỏ hàng
+      const productImage = this.closest('a').querySelector('img');
+      const cartIcon = document.getElementById('cart-icon');
+
+      if (productImage && cartIcon) {
+        const imgClone = productImage.cloneNode(true);
+        const rectStart = productImage.getBoundingClientRect();
+        const rectEnd = cartIcon.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.zIndex = 1000;
+        imgClone.style.left = rectStart.left + 'px';
+        imgClone.style.top = rectStart.top + 'px';
+        imgClone.style.width = productImage.width + 'px';
+        imgClone.style.transition = 'all 0.8s ease-in-out';
+        imgClone.style.opacity = 0.7;
+
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+          imgClone.style.left = rectEnd.left + 'px';
+          imgClone.style.top = rectEnd.top + 'px';
+          imgClone.style.width = '20px';
+          imgClone.style.opacity = 0;
+        }, 10);
+
+        setTimeout(() => {
+          imgClone.remove();
+        }, 900);
+      }
+    });
+  });
+
+  // ✅ Hàm cập nhật số đếm trên icon giỏ hàng
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const countEl = document.getElementById('cart-count');
+    if (total > 0) {
+      countEl.innerText = total;
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  // ✅ Gọi khi trang tải xong
+  window.onload = () => {
+    updateCartCount();
+  };
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block main-content %}
+
+<div class="untree_co-section before-footer-section">
+    <div class="container">
+        <div class="row mb-5">
+            <form class="col-md-12">
+                <div class="site-blocks-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail">Image</th>
+                                <th class="product-name">Product</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quantity">Quantity</th>
+                                <th class="product-total">Total</th>
+                                <th class="product-remove">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-body">
+                            <!-- Render Cart Items Here (via JS) -->
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <button onclick="window.location.href='{% url 'shop' %}'" class="btn btn-outline-black btn-sm btn-block">Continue Shopping</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="text-black h4" for="coupon">Coupon</label>
+                        <p>Enter your coupon code if you have one.</p>
+                    </div>
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pl-5">
+                <div class="row justify-content-end">
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-12 text-right border-bottom mb-5">
+                                <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="text-black">Total Items: </span>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <strong class="text-black total-items">0</strong>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <span class="text-black">Total Price</span>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <strong class="text-black total-price">đ0</strong>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form id="checkout-form" action="{% url 'checkout' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="cart_data" id="cart-data">
+                                    <input type="hidden" name="coupon_code" id="coupon-code">
+                                    <button type="button" onclick="submitCartToCheckout()" class="btn btn-black btn-lg py-3 btn-block">
+                                        Proceed To Checkout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm render giỏ hàng
+    function renderCart() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const tbody = document.getElementById('cart-body');
+        tbody.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            if (!item.price || !item.quantity) return;
+            tbody.innerHTML += `
+                <tr>
+                    <td><img src="${item.image}" class="img-fluid" style="width: 100px;" /></td>
+                    <td><h5>${item.name}</h5></td>
+                    <td>₫${item.price.toLocaleString()}</td>
+                    <td>
+                        <button onclick="changeQuantity(${index}, -1)" style="background: transparent; border: none; font-weight: bold;">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="changeQuantity(${index}, 1)" style="background: transparent; border: none; font-weight: bold;">+</button>
+                    </td>
+                    <td>₫${(item.price * item.quantity).toLocaleString()}</td>
+                    <td><button onclick="removeItem(${index})" style="background: transparent; border: none; font-weight: bold;">X</button></td>
+                </tr>
+            `;
+        });
+        updateCartTotal();
+        updateCartCount();
+    }
+
+    // Cập nhật tổng giỏ hàng
+    function updateCartTotal() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        let totalPrice = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
+        document.querySelector('.total-items').innerText = totalItems;
+        document.querySelector('.total-price').innerText = `đ${totalPrice.toLocaleString()}`;
+    }
+
+    // Thay đổi số lượng sản phẩm
+    function changeQuantity(index, change) {
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    // Xóa sản phẩm khỏi giỏ
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    // Gửi dữ liệu giỏ hàng và coupon code tới trang checkout
+    function submitCartToCheckout() {
+        const cart = localStorage.getItem("cart");
+        const coupon = document.getElementById("coupon").value;
+
+        document.getElementById("cart-data").value = cart;
+        document.getElementById("coupon-code").value = coupon;
+        document.getElementById("checkout-form").submit();
+    }
+
+    // Hiển thị giỏ hàng khi tải trang
+    window.onload = renderCart;
+</script>
+
+{% endblock %}

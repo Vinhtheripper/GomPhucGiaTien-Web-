@@ -1,0 +1,237 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block shop-content %}
+<!-- Start Why Choose Us Section -->
+<div class="why-choose-section py-5">
+  {% for i in products %}
+  <div class="container">
+    <div class="row align-items-center">
+
+      <!-- Bên trái: nội dung -->
+      <div class="col-lg-6" style="margin-top: -5cm;">
+        <h2 class="section-title">{{ i.name }}</h2>
+          <p style="font-weight: 800; font-size: 24px; color: #000;">
+          ₫{{ i.price|floatformat:0|intcomma }}
+        </p>
+        <p>{{ i.detail }}</p>
+          <button class="cart-button add-to-cart"
+                  data-id="{{ i.id }}"
+                  data-name="{{ i.name }}"
+                  data-price="{{ i.final_price }}"
+                  data-image="{{ i.image.url }}"
+          >
+            <span class="add-text">
+                ADD TO CART
+            </span>
+            <span class="added">
+                ADDED :)
+            </span>
+            <i class="fas fa-shopping-cart"></i>
+            <i class="fas fa-box"></i>
+        </button>
+      </div>
+
+      <!-- Bên phải: ảnh -->
+      <div class="col-lg-6 text-center">
+        <div class="img-wrap rounded-4 overflow-hidden shadow">
+          <img src="{{ i.image.url }}" alt="Image"
+           class="img-fluid mx-auto d-block"
+           style="max-height: 450px; max-width: 100%; width: auto; object-fit: contain;">
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  {% endfor %}
+</div>
+        <br><br/>
+        <br><br/>
+        <br><br/>
+
+<style>
+  .img-wrap {
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+    .cart-button {
+  position: relative;
+  width: 200px;
+  height: 55px;
+
+  border-radius: 8px;
+  background-color: #000000;
+  color: #fff;
+  font: 700 16px 'Open Sans', sans-serif;
+  border: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding-left: 60px;
+}
+
+.cart-button:hover {
+  background-color: #7C7458;
+  transform: scale(1.02);
+}
+
+.cart-button:active {
+  transform: scale(0.95);
+}
+
+/* Shopping cart icon */
+.cart-button .fa-shopping-cart {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  transition: left 0.3s ease;
+}
+
+/* Box icon */
+.cart-button .fa-box {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Texts */
+.cart-button .add-text,
+.cart-button .added {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+.cart-button .added {
+  opacity: 0;
+}
+
+/* Khi được click */
+.cart-button.clicked .fa-shopping-cart {
+  left: 110%;
+}
+
+.cart-button.clicked .fa-box {
+  opacity: 1;
+}
+
+.cart-button.clicked .add-text {
+  opacity: 0;
+}
+
+.cart-button.clicked .added {
+  opacity: 1;
+}
+
+</style>
+<script>
+  const cartBtn = document.querySelector('.cart-button');
+
+  cartBtn.addEventListener('click', () => {
+    cartBtn.classList.add('clicked');
+
+    setTimeout(() => {
+      cartBtn.classList.remove('clicked');
+    }, 2000); // Xoá class sau 2s nếu muốn reset hiệu ứng
+  });
+
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const product = {
+        id: this.dataset.id,
+        name: this.dataset.name,
+        price: parseInt(this.dataset.price || 0),
+        image: this.dataset.image,
+        quantity: 1
+      };
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+
+      if (index !== -1) {
+        cart[index].quantity += 1;
+      } else {
+        cart.push(product);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Sản phẩm đã thêm:', product);
+      console.log('Cart hiện tại:', cart);
+
+      updateCartCount();  // Cập nhật số đếm sau khi thêm sản phẩm
+
+      //  Hiệu ứng bay về giỏ hàng
+      const productImage = this.closest('.row').querySelector('img');
+      const cartIcon = document.getElementById('cart-icon');
+
+      if (productImage && cartIcon) {
+        const imgClone = productImage.cloneNode(true);
+        const rectStart = productImage.getBoundingClientRect();
+        const rectEnd = cartIcon.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.zIndex = 1000;
+        imgClone.style.left = rectStart.left + 'px';
+        imgClone.style.top = rectStart.top + 'px';
+        imgClone.style.width = productImage.width + 'px';
+        imgClone.style.transition = 'all 0.8s ease-in-out';
+        imgClone.style.opacity = 0.7;
+
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+          imgClone.style.left = rectEnd.left + 'px';
+          imgClone.style.top = rectEnd.top + 'px';
+          imgClone.style.width = '20px';
+          imgClone.style.opacity = 0;
+        }, 10);
+
+        setTimeout(() => {
+          imgClone.remove();
+        }, 900);
+      }
+    });
+  });
+
+  //  Hàm cập nhật số đếm trên icon giỏ hàng
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const countEl = document.getElementById('cart-count');
+    if (total > 0) {
+      countEl.innerText = total;
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  //  Gọi khi trang tải xong
+  window.onload = () => {
+    updateCartCount();
+  };
+
+</script>
+
+
+
+
+<!-- End Why Choose Us Section -->
+{% endblock %}

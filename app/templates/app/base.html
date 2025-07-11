@@ -1,0 +1,370 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="favicon.png">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+
+		<!-- Bootstrap CSS -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<link href="{% static 'app/css/bootstrap.min.css' %}" rel="stylesheet" />
+		<link href="{% static 'app/css/tiny-slider.css' %}" rel="stylesheet" />
+		<link href="{% static 'app/css/style.css' %}" rel="stylesheet" />
+	<style>
+		.search-overlay {
+		  display: none;
+		  position: fixed;
+		  inset: 0;
+		  background-color: rgba(0, 0, 0, 0.5); /* Mờ nền */
+		  z-index: 9999;
+		  justify-content: center;
+		  align-items: center;
+		}
+
+		.search-overlay.active {
+		  display: flex;
+		}
+
+		/* From Uiverse.io by EddyBel */
+		.input__container {
+		  position: relative;
+		  background: rgba(255, 255, 255, 0.664);
+		  padding: 10px 15px;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  gap: 5px;
+		  border-radius: 22px;
+		  max-width: 300px;
+		  transition: transform 400ms;
+		  transform-style: preserve-3d;
+		  transform: rotateX(15deg) rotateY(-20deg);
+		  perspective: 500px;
+		}
+
+		.shadow__input {
+		  content: "";
+		  position: absolute;
+		  width: 100%;
+		  height: 100%;
+		  left: 0;
+		  bottom: 0;
+		  z-index: -1;
+		  filter: blur(30px);
+		  border-radius: 20px;
+		  background-color: #7C7458;
+		  background-image: radial-gradient(at 85% 51%, hsla(60,60%,61%,1) 0px, transparent 50%),
+			radial-gradient(at 74% 68%, hsla(235,69%,77%,1) 0px, transparent 50%),
+			radial-gradient(at 64% 79%, hsla(284,72%,73%,1) 0px, transparent 50%),
+			radial-gradient(at 75% 16%, hsla(283,60%,72%,1) 0px, transparent 50%),
+			radial-gradient(at 90% 65%, hsla(153,70%,64%,1) 0px, transparent 50%),
+			radial-gradient(at 91% 83%, hsla(283,74%,69%,1) 0px, transparent 50%),
+			radial-gradient(at 72% 91%, hsla(213,75%,75%,1) 0px, transparent 50%);
+		}
+
+		.input__button__shadow {
+		  cursor: pointer;
+		  border: none;
+		  background: none;
+		  transition: transform 400ms, background 400ms;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  border-radius: 12px;
+		  padding: 5px;
+		}
+
+		.input__button__shadow:hover {
+		  background: rgba(255, 255, 255, 0.411);
+		}
+
+		.input__search {
+		  width: 100%;
+		  border-radius: 20px;
+		  outline: none;
+		  border: none;
+		  padding: 8px;
+		  position: relative;
+		}
+		</style>
+		<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
+	</head>
+
+	<body>
+
+		<!-- Start Header/Navigation -->
+		<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+			<div class="container">
+				<a class="navbar-brand" href="{% url 'home' %}">Ceramic<span>.</span></a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+						<li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+							<a class="nav-link" href="{% url 'home' %}">Home</a>
+						</li>
+						<li class="nav-item {% if request.resolver_match.url_name == 'shop' %}active{% endif %}"
+						><a class="nav-link" href="{% url 'shop' %}">Shop</a></li>
+						<li class="nav-item {% if request.resolver_match.url_name == 'contactus' %}active{% endif %}"
+						><a class="nav-link" href="{% url 'contactus' %}">Contact us</a></li>
+
+						<li class="nav-item {% if request.resolver_match.url_name == 'blog' %}active{% endif %}"
+						><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item {% if request.resolver_match.url_name == 'service' %}active{% endif %}"
+						><a class="nav-link" href="{% url 'service' %}">Service</a></li>
+					</ul>
+
+					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+						<li><a class="nav-link" href="javascript:void(0);" id="search-icon">
+						  <img src="{% static 'app/images/search-icon.svg' %}">
+						</a></li>
+						<li class="nav-item dropdown">
+							  {% if request.user.is_authenticated %}
+								<a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								  <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;" alt="Avatar">
+								</a>
+								<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+								  <li><a class="dropdown-item" href="#">👤 {{ request.user.get_full_name|default:request.user.username }}</a></li>
+								  <li><hr class="dropdown-divider"></li>
+								  <li><a class="dropdown-item" href="{% url 'logout' %}?next={{ request.path }}">🚪 Logout</a></li>
+								</ul>
+							  {% else %}
+								<a class="nav-link" href="{% url 'login' %}">
+								  <img src="{% static 'app/images/user.svg' %}" alt="Login Icon">
+								</a>
+							  {% endif %}
+							</li>
+
+						<li style="position: relative;">
+						  <a class="nav-link" href="{% url 'cart' %}" id="cart-icon">
+							<img src="{% static 'app/images/cart.svg' %}">
+							<span id="cart-count"
+								  style="
+									position: absolute;
+									top: -6px;
+									right: -6px;
+									background-color: white;
+									color: black;
+									font-weight: bold;
+									border-radius: 50%;
+									width: 22px;
+									height: 22px;
+									font-size: 12px;
+									text-align: center;
+									line-height: 22px;
+									display: none;
+									box-shadow: 0 0 3px rgba(0,0,0,0.2);
+								  ">
+							</span>
+						  </a>
+						</li>
+
+
+					</ul>
+				</div>
+			</div>
+
+		</nav>
+		{% block main-content %}{% endblock main-content %}
+		{% block shop-content %}{% endblock shop-content %}
+		{% block search-content %}{% endblock search-content %}
+
+		<!-- Start Footer Section -->
+		<footer class="footer-section">
+			<div class="container relative">
+
+				<!-- chỗ này có thể đặt ảnh động -->
+				<div class="sofa-img">
+					<img src="{% static 'app/images/aa.png' %}" alt="Image" class="img-fluid">
+				</div>
+
+				<div class="row">
+					<div class="col-lg-8">
+						<div class="subscription-form">
+							<h3 class="d-flex align-items-center"><span class="me-1"><img src="{% static 'app/images/envelope-outline.svg' %}" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+							<form action="#" class="row g-3">
+								<div class="col-auto">
+									<input type="text" class="form-control" placeholder="Enter your name">
+								</div>
+								<div class="col-auto">
+									<input type="email" class="form-control" placeholder="Enter your email">
+								</div>
+								<div class="col-auto">
+									<button class="btn btn-primary">
+										<span class="fa fa-paper-plane"></span>
+									</button>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-5 mb-5">
+					<div class="col-lg-4">
+						<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Ceramic<span>.</span></a></div>
+						<p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant</p>
+
+						<ul class="list-unstyled custom-social">
+							<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-8">
+						<div class="row links-wrap">
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">About us</a></li>
+									<li><a href="#">Services</a></li>
+									<li><a href="#">Blog</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Support</a></li>
+									<li><a href="#">Knowledge base</a></li>
+									<li><a href="#">Live chat</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Jobs</a></li>
+									<li><a href="#">Our team</a></li>
+									<li><a href="#">Leadership</a></li>
+									<li><a href="#">Privacy Policy</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Nordic Chair</a></li>
+									<li><a href="#">Kruzo Aero</a></li>
+									<li><a href="#">Ergonomic Chair</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="border-top copyright">
+					<div class="row pt-4">
+						<div class="col-lg-6">
+							<p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a> Distributed By <a hreff="https://themewagon.com">ThemeWagon</a>  <!-- License information: https://untree.co/license/ -->
+            </p>
+						</div>
+
+						<div class="col-lg-6 text-center text-lg-end">
+							<ul class="list-unstyled d-inline-flex ms-auto">
+								<li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</footer>
+		<!-- End Footer Section -->
+
+
+
+
+		<script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
+		<script src="{% static 'app/js/tiny-slider.js' %}"></script>
+		<script src="{% static 'app/js/custom.js' %}"></script>
+
+
+		<script>
+			  function updateCartCount() {
+				const cart = JSON.parse(localStorage.getItem('cart')) || [];
+				const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+				const countEl = document.getElementById('cart-count');
+				if (countEl) {
+				  countEl.innerText = total;
+				  countEl.style.display = total > 0 ? 'inline-block' : 'none';
+				}
+			  }
+
+			  // Gọi hàm khi trang tải xong
+			  document.addEventListener("DOMContentLoaded", updateCartCount);
+			</script>
+
+
+
+
+
+	<!-- Search Overlay -->
+
+		<div id="searchOverlay" class="search-overlay">
+		  <form action="{% url 'search' %}" method="POST" class="input__container">
+			  {% csrf_token %}
+			<div class="shadow__input"></div>
+			<button type="submit" class="input__button__shadow">
+			  <!-- icon svg -->
+			</button>
+			<input type="text" name="searched" class="input__search" placeholder="What do you want to search?"  required>
+		  </form>
+		</div>
+
+
+
+	<script>
+		  const searchIcon = document.getElementById('search-icon');
+		  const searchOverlay = document.getElementById('searchOverlay');
+		  const searchForm = searchOverlay.querySelector('form');
+		  const inputField = searchOverlay.querySelector('.input__search');
+
+
+		  let overlayVisible = false;
+
+		  searchIcon.addEventListener('click', (e) => {
+			e.preventDefault(); // ngăn submit ngay
+			searchOverlay.classList.add('active');
+			inputField.focus();
+			overlayVisible = true;
+		  });
+
+		  searchOverlay.addEventListener('click', (e) => {
+			if (e.target === searchOverlay) {
+			  searchOverlay.classList.remove('active');
+			  overlayVisible = false;
+			}
+		  });
+
+		  document.addEventListener('keydown', (e) => {
+			if (e.key === "Escape") {
+			  searchOverlay.classList.remove('active');
+			  overlayVisible = false;
+			}
+		  });
+
+		  // Ngăn submit nếu chưa nhập gì
+		  searchForm.addEventListener("submit", function (e) {
+			if (!inputField.value.trim()) {
+			  e.preventDefault(); // không gửi nếu trống
+			}
+		  });
+		</script>
+
+
+
+	</body>
+
+</html>

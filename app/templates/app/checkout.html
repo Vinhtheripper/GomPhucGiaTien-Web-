@@ -1,0 +1,264 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main-content %}
+
+
+
+		<div class="untree_co-section">
+
+		    <div class="container">
+		      <div class="row mb-5">
+
+		        <div class="col-md-12">
+					<form method="POST" action="{% url 'checkout' %}" id="checkout-form">
+					  {% csrf_token %}
+						<input type="hidden" name="cart_data" id="cart-data">
+    					<input type="hidden" name="coupon_code" id="coupon-code">
+						<input type="hidden" name="payment_method" id="payment_method_field" value="cash">
+		          {% if not user.is_authenticated %}
+					  <div class="border p-4 rounded" role="alert">
+						Returning customer? <a href="#">Click here</a> to login
+					  </div>
+					{% endif %}
+
+		        <div class="form-group">
+				  {% if invalid_coupon %}
+					<label for="coupon_reenter" class="text-black font-weight-bold">Coupon code</label>
+					<div class="alert alert-danger mt-2" role="alert">
+					  Mã giảm giá không hợp lệ hoặc đã hết hạn.
+					</div>
+					<input type="text" class="form-control" name="coupon_code" id="coupon_reenter"
+						 value="{{ coupon_code_input }}" placeholder="Nhập lại mã giảm giá (nếu có)">
+				  {% endif %}
+
+				</div>
+					<br></br>
+
+		      <div class="row">
+		        <div class="col-md-6 mb-5 mb-md-0">
+
+		          <h2 class="h3 mb-3 text-black">Billing Details</h2>
+
+		          <div class="p-3 p-lg-5 border bg-white">
+		            <div class="form-group">
+		              <label for="c_country" class="text-black">Country <span class="text-danger">*</span></label>
+		              <select id="c_diff_country" name="c_diff_country" class="form-control">
+						  <option value="">Select a country</option>
+						  {% for code, name in countries %}
+							<option value="{{ code }}" {% if code == shipping_data.country %}selected{% endif %}>{{ name }}</option>
+						  {% endfor %}
+						</select>
+
+		            </div>
+
+
+		            <div class="form-group row">
+		              <div class="col-md-12">
+		                <label for="c_fullname" class="text-black">Full Name </label>
+		                <input type="text" class="form-control" id="c_fullname" name="c_fullname" value="{{ customer_info.full_name }}">
+		              </div>
+		            </div>
+
+		            <div class="form-group row">
+		              <div class="col-md-12">
+		                <label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
+		                <input type="text" class="form-control" id="c_address" name="c_address" placeholder="Your Address" value="{{ shipping_data.address|default:'' }}">
+		              </div>
+		            </div>
+
+
+		            <div class="form-group row">
+		              <div class="col-md-6">
+		                <label for="c_state" class="text-black">State  <span class="text-danger">*</span></label>
+		                <input type="text" class="form-control" id="c_state" name="c_state" value="{{ shipping_data.state|default:'' }}">
+		              </div>
+		              <div class="col-md-6">
+		                <label for="c_city" class="text-black">City/Province <span class="text-danger">*</span></label>
+		                <input type="text" class="form-control" id="c_city" name="c_city" value="{{ shipping_data.city|default:'' }}">
+		              </div>
+		            </div>
+
+		            <div class="form-group row mb-5">
+		              <div class="col-md-6">
+		                <label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+		                <input type="text" class="form-control" id="c_email_address" name="c_email_address" value="{{ customer_info.email }}">
+		              </div>
+		              <div class="col-md-6">
+		                <label for="c_mobile" class="text-black">Phone <span class="text-danger">*</span></label>
+		                <input type="text" class="form-control" id="c_mobile" name="c_mobile" placeholder="Phone Number" value="{{ shipping_data.mobile|default:'' }}">
+		              </div>
+		            </div>
+
+
+
+
+		            <div class="form-group">
+		              <label for="c_order_notes" class="text-black">Order Notes</label>
+		              <textarea name="c_order_notes" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
+		            </div>
+
+		          </div>
+
+		        </div>
+		        <div class="col-md-6">
+
+		          <div class="row mb-5">
+		            <div class="col-md-12">
+		              <h2 class="h3 mb-3 text-black">Your Order</h2>
+		              <div class="p-3 p-lg-5 border bg-white">
+		                <table class="table site-block-order-table mb-5">
+		                  <thead>
+		                    <th>Product</th>
+		                    <th>Total</th>
+		                  </thead>
+		                  <tbody id="cart-summary-body">
+							  <!-- Nội dung giỏ hàng sẽ được JavaScript tự động render ở đây từ localStorage -->
+							</tbody>
+
+		                </table>
+
+
+
+		                <div class="border p-3 mb-3">
+		                  <h3 class="h6 mb-0"><a class="d-block" data-bs-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false" aria-controls="collapsebank">Cash on Delivery</a></h3>
+		                  <div class="form-check">
+							  <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash" checked>
+							  <label class="form-check-label" for="payment_cash">
+								Cash on Delivery
+							  </label>
+							</div>
+
+		                </div>
+
+		                <div class="border p-3 mb-3">
+		                  <h3 class="h6 mb-0"><a class="d-block" data-bs-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="false" aria-controls="collapsecheque">Cheque Payment</a></h3>
+
+		                  <div class="collapse" id="collapsecheque">
+		                    <div class="py-2">
+		                       <div class="d-flex justify-content-center gap-3 my-4">
+								<button class="btn btn-outline-danger px-4 py-2 pay-btn" onclick="showQR('momo')" data-method="momo">
+									<img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo" width="24" height="24"> Momo
+								</button>
+
+								<button class="btn btn-outline-primary px-4 py-2 pay-btn" onclick="showQR('vnpay')" data-method="vnpay">
+									<img src="https://cdn.brandfetch.io/idV02t6WJs/w/820/h/249/theme/dark/logo.png?c=1dxbfHSJFAPEGdCLU4o5B" alt="VNPay" width="24" height="24"> VNPay
+								</button>
+
+								<button class="btn btn-outline-success px-4 py-2 pay-btn" onclick="showQR('bank')" data-method="bank">
+									<img src="https://cdn-icons-png.flaticon.com/512/2529/2529521.png" alt="Banking" width="24" height="24"> Banking
+								</button>
+							  </div>
+		                    </div>
+		                  </div>
+		                </div>
+
+		                <div class="form-group">
+		                  <button type="submit" name="place_order" value="1" class="btn btn-black btn-lg py-3 btn-block">Place Order</button>
+		                </div>
+
+
+		              </div>
+
+		            </div>
+
+		          </div>
+
+		        </div>
+
+		      </div>
+					</form>
+
+		      <!-- </form> -->
+		    </div>
+
+		  </div>
+			</div>
+
+			</div>
+
+
+<script>
+	function renderCartItems() {
+		const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+		const tableBody = document.getElementById('cart-summary-body');
+		let html = '';
+		let totalQty = 0;
+		let totalPrice = 0;
+
+		cart.forEach(item => {
+			const total = item.quantity * item.price;
+			html += `
+			<tr>
+				<td>${item.name} <strong class="mx-2">x</strong> ${item.quantity}</td>
+				<td>₫${total.toLocaleString()}</td>
+			</tr>`;
+			totalQty += item.quantity;
+			totalPrice += total;
+		});
+
+		html += `<tr>
+			<td class="text-black font-weight-bold"><strong>Total Products</strong></td>
+			<td class="text-black">${totalQty}</td>
+		</tr>`;
+		html += `<tr>
+			<td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+			<td class="text-black font-weight-bold"><strong>₫${totalPrice.toLocaleString()}</strong></td>
+		</tr>`;
+
+		tableBody.innerHTML = html;
+	}
+
+
+document.addEventListener('DOMContentLoaded', renderCartItems);
+
+document.addEventListener('DOMContentLoaded', function () {
+    const qrButtons = document.querySelectorAll('.pay-btn');
+    const paymentField = document.getElementById('payment_method_field');
+    const radioCash = document.querySelector('input[name="payment_method"][value="cash"]');
+
+    qrButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            qrButtons.forEach(b => b.classList.remove('btn-active'));
+            this.classList.add('btn-active');
+            paymentField.value = this.dataset.method;
+            radioCash.checked = false;
+        });
+    });
+
+    radioCash.addEventListener('change', function () {
+        if (this.checked) {
+            qrButtons.forEach(b => b.classList.remove('btn-active'));
+            paymentField.value = 'cash';
+        }
+    });
+
+    // Trước khi submit, đẩy dữ liệu giỏ hàng và mã giảm giá vào form
+    document.getElementById('checkout-form').addEventListener('submit', function() {
+    	const submitBtn = this.querySelector('button[type="submit"]');
+		if (submitBtn) {
+			submitBtn.disabled = true;
+			submitBtn.innerText = "Processing...";
+		}
+        const cart = localStorage.getItem('cart') || '[]';
+        const couponInput = document.getElementById('coupon_reenter');
+		const coupon = couponInput ? couponInput.value : '';
+        document.getElementById('cart-data').value = cart;
+		document.getElementById('coupon-code').value = coupon;
+
+
+
+    });
+});
+</script>
+
+
+<style>
+.btn-active {
+    border: 2px solid black !important;
+    background-color: #ddd;
+}
+</style>
+
+
+{% endblock %}

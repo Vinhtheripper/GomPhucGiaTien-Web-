@@ -1,0 +1,244 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main-content %}
+		<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Services</h1>
+								<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+								<p><a href="{% url 'shop' %}" class="btn btn-secondary me-2">Shop Now</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="images/couch.png" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+
+
+
+		<!-- Start Why Choose Us Section -->
+		<div class="why-choose-section">
+			<div class="container">
+
+
+				<div class="row my-5">
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/truck.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Fast &amp; Free Shipping</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/bag.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Easy to Shop</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/support.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>24/7 Support</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/return.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Hassle Free Returns</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/truck.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Fast &amp; Free Shipping</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/bag.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Easy to Shop</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/support.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>24/7 Support</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+					<div class="col-6 col-md-6 col-lg-3 mb-4">
+						<div class="feature">
+							<div class="icon">
+								<img src="{% static 'app/images/return.svg' %}" alt="Image" class="imf-fluid">
+							</div>
+							<h3>Hassle Free Returns</h3>
+							<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+		<!-- End Why Choose Us Section -->
+
+		<!-- Start Product Section -->
+		<div class="product-section" id="first">
+			  <div class="container">
+				<div class="row">
+
+				  <!-- Cột giới thiệu -->
+				  <div class="col-md-12 col-lg-3 mb-5 mb-lg-0" style="margin-top: 1cm;">
+					<h2 class="mb-4 section-title">Crafted with excellent material.</h2>
+					<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+					<p><a href="{% url 'shop' %}" class="btn">Explore</a></p>
+				  </div>
+
+				  <!-- Các sản phẩm: chiếm phần còn lại -->
+				  <div class="col-md-12 col-lg-9" style="margin-left: 0cm;">
+					<div class="row g-5 ms-3">
+					  {% for product in products|slice:":3" %}
+					  <div class="col-12 col-md-4 mb-4">
+						<a class="product-item" href="{% url 'prodetail' %}?id={{ product.id }}"> <!-- Không có add-to-cart ở đây -->
+							  <img src="{{ product.image.url }}" class="img-fluid product-thumbnail" />
+							  <h3 class="product-title">{{ product.name }}</h3>
+							  <strong class="product-price">₫{{ product.price|floatformat:0|intcomma }}</strong>
+							  <span class="icon-cross">
+								<img src="{% static 'app/images/cross.svg' %}"
+									 class="img-fluid add-to-cart"
+									 data-id="{{ product.id }}"
+									 data-name="{{ product.name }}"
+									 data-price="{{ product.price|floatformat:0 }}"
+									 data-image="{{ product.image.url }}"
+									 style="cursor:pointer;" />
+							  </span>
+							</a>
+
+					  </div>
+					  {% endfor %}
+					</div>
+				  </div>
+
+				</div>
+			  </div>
+			</div>
+
+		<!-- End Product Section -->
+
+<script>
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const product = {
+        id: this.dataset.id,
+        name: this.dataset.name,
+        price: parseInt(this.dataset.price || 0),
+        image: this.dataset.image,
+        quantity: 1
+      };
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+
+      if (index !== -1) {
+        cart[index].quantity += 1;
+      } else {
+        cart.push(product);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('Sản phẩm đã thêm:', product);
+      console.log('Cart hiện tại:', cart);
+
+      updateCartCount();  // Cập nhật số đếm sau khi thêm sản phẩm
+
+      // 🔥 Hiệu ứng bay về giỏ hàng
+      const productImage = this.closest('a').querySelector('img');
+      const cartIcon = document.getElementById('cart-icon');
+
+      if (productImage && cartIcon) {
+        const imgClone = productImage.cloneNode(true);
+        const rectStart = productImage.getBoundingClientRect();
+        const rectEnd = cartIcon.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.zIndex = 1000;
+        imgClone.style.left = rectStart.left + 'px';
+        imgClone.style.top = rectStart.top + 'px';
+        imgClone.style.width = productImage.width + 'px';
+        imgClone.style.transition = 'all 0.8s ease-in-out';
+        imgClone.style.opacity = 0.7;
+
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+          imgClone.style.left = rectEnd.left + 'px';
+          imgClone.style.top = rectEnd.top + 'px';
+          imgClone.style.width = '20px';
+          imgClone.style.opacity = 0;
+        }, 10);
+
+        setTimeout(() => {
+          imgClone.remove();
+        }, 900);
+      }
+    });
+  });
+
+  // ✅ Hàm cập nhật số đếm trên icon giỏ hàng
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const countEl = document.getElementById('cart-count');
+    if (total > 0) {
+      countEl.innerText = total;
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  // ✅ Gọi khi trang tải xong
+  window.onload = () => {
+    updateCartCount();
+  };
+</script>
+
+{% endblock %}
